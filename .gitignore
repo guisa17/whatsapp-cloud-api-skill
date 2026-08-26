@@ -1,0 +1,10 @@
+# Never commit credentials — see SKILL.md §11
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+.mypy_cache/
