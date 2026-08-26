@@ -1,11 +1,13 @@
 ---
 name: whatsapp-cloud-api
-description: Build, configure and debug bots on Meta's WhatsApp Cloud API — developers.facebook.com and business.facebook.com panels, tokens, webhooks, Flows, templates, Coexistence and App Review. Use for any Cloud API task, test numbers, Meta credentials, or when "the panel says connected but nothing arrives".
-argument-hint: "[start|diagnose|token|webhook|flow|coexistence]"
+description: Build, configure and debug bots on Meta's WhatsApp Cloud API. Use for any Cloud API task — access tokens, webhooks that verify but never deliver, WhatsApp Flows, message templates, rate limits, pricing, test numbers, Coexistence, App Review — and especially when the panel says "connected successfully" but no messages arrive, or an API call fails with an opaque error code.
+license: MIT
+compatibility: Requires network access to graph.facebook.com. The bundled diagnostic script needs Python 3.9+ and httpx. Verified against Graph API v26.0 on 2026-08-26.
 metadata:
   version: "1.0.0"
   last-verified: "2026-08-26"
-  graph-api: "v26.0"
+  graph-api-version: "v26.0"
+  source: "https://github.com/guisa17/whatsapp-cloud-api-skill"
 ---
 
 # WhatsApp Cloud API

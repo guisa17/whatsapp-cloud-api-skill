@@ -11,7 +11,7 @@ arrive. Most of this document is about those.
 ## Install
 
 ```bash
-git clone https://github.com/YOUR-USER/whatsapp-cloud-api-skill.git \
+git clone https://github.com/guisa17/whatsapp-cloud-api-skill.git \
   ~/.claude/skills/whatsapp-cloud-api
 ```
 
@@ -79,6 +79,12 @@ out of date, or missing a case you hit, please open an issue — especially:
 - Error codes not in the symptom→cause table
 - Anything tagged **[field]** that turned out to be specific to one setup
 - Anything tagged **[unconfirmed]** that you can confirm or refute
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md). Each release records **what was verified and
+when** — for a document about someone else's platform, that date is part of the
+content.
 
 ## License
 
