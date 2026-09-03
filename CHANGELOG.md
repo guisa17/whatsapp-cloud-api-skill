@@ -9,6 +9,32 @@ the verification date is treated as content, not metadata.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.1] — 2026-09-03
+
+Closes the one item 1.1.0 shipped unverified.
+
+### Verified against Meta's documentation
+
+- **Flow JSON 7.3 is current**, and marked *Recommended*. The changelog's own
+  "Updated" stamp reads 2025-11-07, so 7.3 has been current for about ten
+  months — stable, not merely unchecked.
+- **Nothing has expired yet.** Every version back to 2.1 can still be sent.
+
+### Added
+
+- **The supported-version table is two lists, and the gap between them is what
+  "frozen" means.** Publishing accepts 5.1 and 6.0–7.3; sending also accepts
+  2.1, 3.0, 3.1, 4.0 and 5.0. Those five are frozen: sendable, not publishable.
+- **`data_api_version` and message version**, which the skill had ignored in
+  favour of Flow JSON alone. Data API **4.0** (recommended) added two-signature
+  authentication for Flow endpoints — platform-side verification plus an
+  optional flow token signature. Message version **3**.
+- **The changelog returns HTTP 500 to every programmatic client** while
+  rendering normally in a browser. A scripted freshness check will report it
+  permanently down; open it in a browser instead.
+
+[1.1.1]: https://github.com/guisa17/whatsapp-cloud-api-skill/releases/tag/v1.1.1
+
 ## [1.1.0] — 2026-09-03
 
 Re-verified against Meta's documentation, and added field findings from
@@ -61,13 +87,6 @@ Re-checked; **unchanged since 1.0.0**:
 - Pricing is still **per message** since 2025-07-01; non-template messages and
   utility templates inside an open customer service window are still free.
 - Flow JSON versions still freeze, then expire, with ~90 days' notice.
-
-### Not verified this release
-
-- **Latest Flow JSON version.** Meta's Flow JSON changelog returned **HTTP
-  500** from every path tried. The `7.3` claim keeps its original
-  `2026-08-26` date, and both `SKILL.md` and `README.md` say so rather than
-  letting the release date imply otherwise.
 
 ### Corrected
 

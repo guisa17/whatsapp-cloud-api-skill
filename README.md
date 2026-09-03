@@ -57,10 +57,8 @@ from:
 - **[unconfirmed]** — reported by third parties and *not* found in Meta's docs.
   Verify before acting on it.
 
-**Last verified: 2026-09-03, against Graph API v26.0.** One claim — the latest
-Flow JSON version — could not be re-verified that day, because Meta's changelog
-page was returning HTTP 500; `SKILL.md` says so at the top and carries the older
-date for that line specifically.
+**Last verified: 2026-09-03, against Graph API v26.0.** Every dated claim in
+`SKILL.md` was checked on that date; the table at the top of the file lists them.
 
 ## The freshness problem
 

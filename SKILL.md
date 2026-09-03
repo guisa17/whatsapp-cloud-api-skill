@@ -4,7 +4,7 @@ description: Build, configure and debug bots on Meta's WhatsApp Cloud API. Use f
 license: MIT
 compatibility: Requires network access to graph.facebook.com. The bundled diagnostic script needs Python 3.9+ and httpx. Verified against Graph API v26.0 on 2026-09-03.
 metadata:
-  version: "1.1.0"
+  version: "1.1.1"
   last-verified: "2026-09-03"
   graph-api-version: "v26.0"
   source: "https://github.com/guisa17/whatsapp-cloud-api-skill"
@@ -32,8 +32,7 @@ Claims are tagged so you know what to trust:
 button lives in the panel* ages fastest — Meta redesigns often. Treat §1 as a
 hint, not a map.
 
-One claim did **not** get re-verified on that date and still carries the older
-one, because Meta's own page for it was down:
+Everything below was re-verified on that date:
 
 | Claim | Re-verified | Note |
 |---|---|---|
@@ -41,7 +40,7 @@ one, because Meta's own page for it was down:
 | Pricing is **per message** since 2025-07-01 | 2026-09-03 | Unchanged |
 | The 2026-10-01 free-window change | 2026-09-03 | **Confirmed in Meta's docs** — service messages and in-window utility templates become billable. See [§7](#7-pricing-model) |
 | Flow JSON freeze/expiry + ~90-day notice | 2026-09-03 | Unchanged |
-| **Latest Flow JSON is 7.3** | ⚠️ **2026-08-26** | Meta's changelog page returned HTTP 500 on 2026-09-03. Check before relying on it — see [§5](#5-flows) |
+| **Latest Flow JSON is 7.3** | 2026-09-03 | Confirmed *Recommended* in Meta's changelog. The page 500s to scripts but renders in a browser — see [§5](#5-flows) |
 
 ---
 
@@ -269,31 +268,50 @@ a published Flow is immutable, and its version will eventually expire. Plan to
 **recreate Flows periodically**, and keep the JSON in source control so that
 recreation is cheap.
 
-**[verified, 2026-08-26]** Latest Flow JSON: **7.3**. Version 5.0 was frozen
-2025-09-09.
+**[verified, 2026-09-03]** Latest Flow JSON: **7.3**, and it is the one Meta
+marks *Recommended*. The changelog's own "Updated" stamp reads **2025-11-07**,
+so 7.3 has been current for roughly ten months — this claim is stable, not
+merely unchecked.
 
-⚠️ **This is the one claim here that could not be re-verified on 2026-09-03:**
-Meta's Flow JSON changelog returned **HTTP 500** from every path tried — old
-and new prefixes, with and without the `#currently-supported-versions` anchor —
-so the supported-versions table was unreadable. Every other Flows page defers
-to it (`"For supported versions, see the list of versions"`) and their own
-examples run older (2.1 through 5.1), so none of them substitutes for it.
+⚠️ **The changelog renders in a browser but returns HTTP 500 to every
+programmatic client** — old and new prefixes, with or without the anchor, curl
+with browser headers, archive mirrors. If you're scripting a freshness check,
+it will look permanently down. **Open it in a browser instead.**
 
-What corroboration exists is **indirect**: a search-engine index of that same
-Meta changelog still describes **7.3** as the newest, adding that it brought
-improved routing-model and data-model validation. That is Meta's wording, but
-read through a cache of unknown age — enough to make 7.3 the reasonable
-default, not enough to call it verified. Wrapper libraries are no help here;
-they lag (pywa's docs still example 7.2).
+### Supported versions are two different lists
 
-**Check the changelog yourself before pinning a version:**
+The table splits by *what you're doing*, and this is what "frozen" means in
+practice:
 
-```
-https://developers.facebook.com/documentation/business-messaging/whatsapp/flows/changelogs
-```
+| | Flow JSON versions |
+|---|---|
+| **Publishing** a Flow | 5.1 · 6.0–6.3 · 7.0–7.2 · **7.3 (recommended)** |
+| **Sending** an existing Flow | 2.1 · 3.0 · 3.1 · 4.0 · 5.0 · 5.1 · 6.0–6.3 · 7.0–7.2 · **7.3 (recommended)** |
 
-The version-state rules below *were* re-verified on 2026-09-03 — it's only the
-"which version is current" list that is stale.
+The five versions in the second list but not the first — **2.1, 3.0, 3.1, 4.0
+and 5.0** — are the frozen ones: still sendable, no longer publishable. (5.0 is
+frozen while 5.1 is not, which matches its 2025-09-09 freeze.)
+
+**[verified, 2026-09-03]** As of that date **nothing has expired yet**:
+everything back to 2.1 can still be sent. The expiry stage is real and worth
+planning for, but no Flow has actually stopped opening because of it.
+
+### The other two version numbers
+
+Flow JSON is not the only version in play, and the skill's earlier focus on it
+alone was too narrow:
+
+| Field | Current | Notes |
+|---|---|---|
+| `data_api_version` | **4.0** (recommended; 3.0 still supported) | Adds two-signature auth for Flow endpoints |
+| Message version | **3** (recommended) | The `flow_message_version` in the send payload |
+
+**[verified]** Data API **4.0** (Nov 2025) strengthened endpoint security with
+two signatures: *platform-side signature verification*, handled by Meta with no
+work on your side, and an optional *flow token signature* added to the data
+channel payload, which you can verify to confirm a request really came from the
+user who received the Flow message. Opt in by setting `data_api_version` to
+`4.0` in the Flow JSON.
 
 ### Gotchas
 
