@@ -33,7 +33,12 @@ connecting a real number through Coexistence on 2026-08-31.
   paths 404 or serve stale copies.
 - App Review timing as a single data point: 12 days, approved on first
   submission, against the 20 days Meta's panel advertises.
-- Five rows in the symptom→cause table for the above.
+- A four-step post-connection checklist in §8: assign the system user to the
+  new WABA **and** the new number, `subscribed_apps` on the new WABA, update
+  the IDs in your config, then prove it with a real message. All four have to
+  be redone against the WABA the flow created, and skipping any one produces
+  the same silence.
+- Six rows in the symptom→cause table for the above.
 
 ### Changed
 
@@ -64,17 +69,23 @@ Re-checked; **unchanged since 1.0.0**:
   `2026-08-26` date, and both `SKILL.md` and `README.md` say so rather than
   letting the release date imply otherwise.
 
+### Corrected
+
+- **The free 24-hour window really is ending, and 1.0.0 was wrong to call it
+  `[unconfirmed]`.** It is documented — just not on the pricing page. A
+  separate page, `…/whatsapp/pricing/non-template-messages`, states that on
+  **2026-10-01** Meta begins charging for **service messages** ("not charged
+  since November 2024") and for **utility templates sent in response to users
+  inside an open 24-hour window** ("not charged since July 1, 2025"), at
+  utility/authentication rates. A **Meta Business Agent** per-token charge
+  started **2026-08-01**. §7 now carries this as `[verified]`.
+- The failure mode behind that mistake is worth naming: Meta splits *current*
+  and *upcoming* pricing across pages, and the main pricing page still
+  describes today's model with no hint that it changes in four weeks. §7 warns
+  against reading only that page.
+
 ### Deliberately not included
 
-- The claim that the free 24-hour service window ends **2026-10-01** remains
-  `[unconfirmed]`. Re-checked on 2026-09-03 against both the pricing page and
-  the dedicated *Pricing Updates* page: Meta still documents in-window
-  non-template messages and utility templates as free, and still attributes
-  2026-10-01 only to rate-card changes in nine markets. Third-party accounts
-  did get more specific — naming 2026-09-01 as the date Meta would publish
-  final service rates — and **that deadline passed with nothing published**, so
-  the claim is now marginally weaker, not stronger. §7 says to plan for the
-  scenario anyway and re-check Meta directly in late September 2026.
 - The **12-month** Flow JSON support window quoted by third-party guides.
   Meta's versioning page states 90 days' notice and no such window.
 

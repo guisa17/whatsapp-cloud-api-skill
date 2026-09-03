@@ -39,7 +39,7 @@ one, because Meta's own page for it was down:
 |---|---|---|
 | Graph API is on **v26.0** | 2026-09-03 | Unchanged; released 2026-07-29 |
 | Pricing is **per message** since 2025-07-01 | 2026-09-03 | Unchanged |
-| The 2026-10-01 free-window claim | 2026-09-03 | Still **not** in Meta's docs — see [§7](#7-pricing-model) |
+| The 2026-10-01 free-window change | 2026-09-03 | **Confirmed in Meta's docs** — service messages and in-window utility templates become billable. See [§7](#7-pricing-model) |
 | Flow JSON freeze/expiry + ~90-day notice | 2026-09-03 | Unchanged |
 | **Latest Flow JSON is 7.3** | ⚠️ **2026-08-26** | Meta's changelog page returned HTTP 500 on 2026-09-03. Check before relying on it — see [§5](#5-flows) |
 
@@ -322,7 +322,7 @@ The version-state rules below *were* re-verified on 2026-09-03 — it's only the
 | **24 characters** per row title | |
 | **1024 characters** of body | |
 | **`media_id` expires after 30 days** | The file stops sending. Re-upload |
-| **24-hour window** | Outside it you can only send **approved templates** |
+| **24-hour window** | Outside it you can only send **approved templates**. Inside it, replies are free **only until 2026-10-01** — see [§7](#7-pricing-model) |
 
 **Validate limits before calling the API.** An over-limit payload returns a
 generic 400 that doesn't say which field was wrong; an explicit error in your
@@ -345,47 +345,48 @@ replaced the older per-conversation model — if you find a guide describing
 - You're charged when a **template message is delivered**.
 - Categories: **Marketing** (always charged), **Utility** and **Authentication**
   (charged outside customer service windows).
-- **Non-template messages inside an open customer service window are free.**
+- **Non-template messages inside an open customer service window are free** — **until 2026-10-01**, see below.
 - A 72-hour **free entry point** window applies when the user initiates contact
   through ads or Page buttons.
 
-### ⚠️ The 2026-10-01 question — still open
+### The free window is ending — 2026-10-01
 
-**[unconfirmed, re-checked 2026-09-03]** Many third-party sources — including
-BSPs and resellers, who are usually well briefed — state that **service
-messages (free-form agent replies) and utility templates inside the 24-hour
-customer service window become billable on 2026-10-01**, ending a free period
-that ran from 2025-07-01.
+**[verified, 2026-09-03]** This is documented, but **not on the pricing page**.
+It lives on a separate page that the main pricing page does not surface:
+`…/whatsapp/pricing/non-template-messages`. Two dates:
 
-**Meta's own documentation still does not say this.** Re-checked on 2026-09-03
-against both the pricing page and the dedicated *Pricing Updates* page:
+| Date | What changes |
+|---|---|
+| **2026-08-01** | Meta charges for **Meta Business Agent** messages, **per token**, invoiced monthly. |
+| **2026-10-01** | Meta charges for **service messages** — *"which have not been charged since November 2024"*. |
+| **2026-10-01** | Meta charges for **utility templates sent in response to users inside an open 24-hour customer service window** — *"these messages have not been charged since July 1, 2025"*. |
 
-- Both still state that non-template messages are free in an open customer
-  service window, and that *"utility templates delivered within an open
-  customer service window are free."*
-- **2026-10-01 appears only as a rate-card change** for nine specific markets
-  (Bangladesh, Iraq, Nepal, Sri Lanka, Kazakhstan, Kuwait, Morocco, Oman,
-  Ukraine) — not as a change to *which* messages are free.
-- The pricing object still returns `"billable": false` with
-  `"type": "free_customer_service"` for that case.
+Definitions and rates:
 
-**What changed since 2026-08-26:** third-party accounts got *more* specific
-(naming a 2026-09-01 deadline for Meta to publish final per-country service
-rates), and that deadline **passed without Meta publishing anything**. So as of
-2026-09-03, roughly four weeks out from the alleged date, the claim is
-**unconfirmed and slightly weaker than before**, not stronger.
+- *"Any non-template message that is not powered by Meta Business Agent is a
+  service message."* So a free-form reply — from a human agent or your own
+  third-party bot — is a service message, and becomes billable.
+- **Service messages are priced like utility and authentication messages** for
+  the same country.
+- Meta said it would publish the 2026-10-01 rates **by 2026-09-01**.
+- The **72-hour free entry point** window is unchanged for template delivery.
 
-Two things follow, and they point in different directions — hold both:
+⚠️ **Read §7 above with this in mind.** Everything in it describes the model
+*until 2026-10-01*. After that date, "non-template messages inside an open
+window are free" and "utility templates in-window are free" both stop being
+true, and the practical consequence is large: **a bot that only ever replies
+inside the 24-hour window goes from free to paid per message.**
 
-- **Don't restate it as fact.** It is not in Meta's docs, and the one checkable
-  prediction attached to it did not come true on time.
-- **Don't budget as if it can't happen.** Sources this consistent are rarely
-  inventing a date outright, and Meta has announced pricing changes on short
-  notice before. If your cost model depends on free in-window replies, price
-  the scenario where they aren't, and **re-check Meta's pricing page directly
-  in late September 2026** — not this file, and not a blog.
-
-If you have a Meta rep or BSP, that is the only source that settles it.
+> **Why this was easy to get wrong.** Meta splits *current* pricing and
+> *upcoming* pricing across different pages. As of 2026-09-03 the main pricing
+> page still states — correctly, for today — that non-template messages and
+> in-window utility templates are free, with `"billable": false` and
+> `"type": "free_customer_service"` in the pricing object. Nothing on it says
+> that changes in four weeks. **Read the "upcoming pricing updates" page before
+> concluding anything about future cost**, and don't treat the absence of a
+> change on the main page as evidence there isn't one. An earlier version of
+> this file drew exactly that wrong conclusion and labelled the change
+> `[unconfirmed]`.
 
 **[verified]** The **On-Premises API was fully sunset on 2025-10-23.** Cloud
 API is the only supported official architecture.
@@ -484,6 +485,30 @@ curl -s -H "Authorization: Bearer $TOKEN" \
 value that fools people: the panel says connected, the number is listed, and
 nothing works.
 
+### After the connection: four steps, one symptom
+
+**[field]** The flow finishing is not the end. Four things have to be redone
+against the **new** WABA and the **new** number, and **skipping any of them
+produces the same silence** — no error, no failed request, no log line.
+
+1. **Assign your system user to the new WABA — and to the new number.** They
+   are **two separate entries** in the asset picker (§2): one lists WABAs, the
+   other lists phone numbers. Assigning only the WABA is the common miss.
+   Whatever your token could reach before, it cannot reach these — they didn't
+   exist an hour ago.
+2. **`POST /{waba-id}/subscribed_apps`** on the new WABA. The subscription you
+   made during development was for a *different* WABA and does not carry over.
+   There is still no button for this (§3a).
+3. **Update the IDs in your own config** — `WABA_ID`, `PHONE_NUMBER_ID`. If
+   they still point at the test number, your bot starts cleanly, logs nothing
+   unusual, and processes none of the real traffic. Restart whatever caches
+   them at boot.
+4. **Send a real message from an allowlisted number** and confirm it lands in
+   your system. The panel is not evidence; a row in your database is.
+
+The token itself usually does **not** need replacing — a system-user token
+doesn't expire. It just needs the assets from step 1.
+
 ### Other things learned the hard way
 
 - **The 14-day rule** — **[verified, 2026-09]** now documented, as an
@@ -537,6 +562,7 @@ reviewer will ask what you need them for. A bot that replies to messages needs
 | `missing required Graph API permissions for Cloud API companion pairing` | Often **not** missing permissions — the app is still in Development mode, where Advanced Access is inert ([§8](#8-coexistence-and-app-review)) |
 | "not a valid business identifier" during Embedded Signup | Wrong WABA picked — Embedded Signup made its own, and it's the near-identical twin ([§8](#8-coexistence-and-app-review)) |
 | Coexistence number connected, `platform_type: ON_PREMISE` | The pairing didn't complete on Cloud API. It is not connected, whatever the panel says |
+| Coexistence finished, still total silence | One of the four post-connection steps was skipped — system user, `subscribed_apps`, config IDs, all against the **new** WABA ([§8](#8-coexistence-and-app-review)) |
 | Coexistence number stopped syncing | Nobody opened WhatsApp Business for ~14 days (`PRIMARY_INACTIVITY`) |
 | A doc link 404s, or contradicts the panel | Docs moved to `/documentation/business-messaging/whatsapp/`; old paths 404 or serve a stale copy ([§1](#1-panel-navigation)) |
 
@@ -588,9 +614,10 @@ Order that avoids rework:
    in that order, both easy to forget: get Advanced Access approved, **then
    publish the app to Live** — approval alone does nothing while the app sits
    in Development mode ([§8](#8-coexistence-and-app-review)).
-9. **After a Coexistence connection, re-read your IDs from the API.** The WABA
-   the flow created may not be the one you intended to use, and every ID in
-   your config has to follow it.
+9. **After a Coexistence connection, redo the setup against the new WABA.**
+   The flow may have created its own, and the system-user assignment,
+   `subscribed_apps`, and the IDs in your config all have to follow it. See the
+   four-step checklist in [§8](#8-coexistence-and-app-review).
 
 ---
 
