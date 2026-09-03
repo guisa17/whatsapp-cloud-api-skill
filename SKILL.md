@@ -1,11 +1,11 @@
 ---
 name: whatsapp-cloud-api
-description: Build, configure and debug bots on Meta's WhatsApp Cloud API. Use for any Cloud API task — access tokens, webhooks that verify but never deliver, WhatsApp Flows, message templates, rate limits, pricing, test numbers, Coexistence, App Review — and especially when the panel says "connected successfully" but no messages arrive, or an API call fails with an opaque error code.
+description: Build, configure and debug bots on Meta's WhatsApp Cloud API. Use for any Cloud API task — access tokens, webhooks that verify but never deliver, WhatsApp Flows, message templates, rate limits, pricing, test numbers, Coexistence, App Review — and especially when the panel says "connected successfully" but no messages arrive, an approved permission behaves as if it were missing, or an API call fails with an opaque error code.
 license: MIT
-compatibility: Requires network access to graph.facebook.com. The bundled diagnostic script needs Python 3.9+ and httpx. Verified against Graph API v26.0 on 2026-08-26.
+compatibility: Requires network access to graph.facebook.com. The bundled diagnostic script needs Python 3.9+ and httpx. Verified against Graph API v26.0 on 2026-09-03.
 metadata:
-  version: "1.0.0"
-  last-verified: "2026-08-26"
+  version: "1.1.0"
+  last-verified: "2026-09-03"
   graph-api-version: "v26.0"
   source: "https://github.com/guisa17/whatsapp-cloud-api-skill"
 ---
@@ -28,9 +28,20 @@ Claims are tagged so you know what to trust:
 - **[field]** — observed in production. True at least once, for at least one setup.
 - **[unconfirmed]** — reported by third parties, *not* found in Meta's docs. Verify before acting.
 
-**Last verified: 2026-08-26 against Graph API v26.0.** Anything about *where a
+**Last verified: 2026-09-03 against Graph API v26.0.** Anything about *where a
 button lives in the panel* ages fastest — Meta redesigns often. Treat §1 as a
 hint, not a map.
+
+One claim did **not** get re-verified on that date and still carries the older
+one, because Meta's own page for it was down:
+
+| Claim | Re-verified | Note |
+|---|---|---|
+| Graph API is on **v26.0** | 2026-09-03 | Unchanged; released 2026-07-29 |
+| Pricing is **per message** since 2025-07-01 | 2026-09-03 | Unchanged |
+| The 2026-10-01 free-window claim | 2026-09-03 | Still **not** in Meta's docs — see [§7](#7-pricing-model) |
+| Flow JSON freeze/expiry + ~90-day notice | 2026-09-03 | Unchanged |
+| **Latest Flow JSON is 7.3** | ⚠️ **2026-08-26** | Meta's changelog page returned HTTP 500 on 2026-09-03. Check before relying on it — see [§5](#5-flows) |
 
 ---
 
@@ -54,6 +65,24 @@ won't.
 ⚠️ **[field]** Portfolios often contain **several apps with the same name**.
 The name is not enough to know which one you're holding. Compare **IDs**, and
 make your tooling print the ID of the app that owns the token.
+
+### The documentation moved
+
+**[verified, 2026-09]** Meta reorganized the developer docs. WhatsApp pages now
+live under:
+
+```
+https://developers.facebook.com/documentation/business-messaging/whatsapp/...
+```
+
+The old `/docs/whatsapp/...` paths **404 rather than redirect** — for example
+`…/docs/whatsapp/embedded-signup/onboard-whatsapp-business-app-users` is gone,
+and the page is now at
+`…/documentation/business-messaging/whatsapp/embedded-signup/onboarding-business-app-users/`.
+Some old paths still serve a **stale copy** instead of 404ing, which is worse:
+you read outdated content believing it's current. If a link in a blog post (or
+in an older version of this file) points at `/docs/whatsapp/`, re-find the page
+under the new prefix before trusting it.
 
 ---
 
@@ -229,16 +258,32 @@ the only way to learn why a Flow won't publish.
 | **Frozen** | Can't publish *new* Flows on it. Existing ones keep working. |
 | **Expired** | **Existing Flows can no longer be opened.** |
 
-Typically ~90 days' notice before freeze, but Meta reserves the right to move
-faster for security reasons.
+**[verified, 2026-09]** Meta's stated policy: *"In general, the period before
+freeze or expiry will be 90 days from the release of a new version"* — while
+noting that "circumstances may require that a version be frozen or expired in
+less than 90 days." Third-party guides quoting a **12-month** support window
+are stating something Meta's versioning page does not.
 
 ⚠️ **Combine that with the next bullet and you get a real lifecycle problem:**
 a published Flow is immutable, and its version will eventually expire. Plan to
 **recreate Flows periodically**, and keep the JSON in source control so that
 recreation is cheap.
 
-**[verified, 2026-08]** Latest Flow JSON: **7.3**. Version 5.0 was frozen
+**[verified, 2026-08-26]** Latest Flow JSON: **7.3**. Version 5.0 was frozen
 2025-09-09.
+
+⚠️ **This is the one claim here that could not be re-verified on 2026-09-03:**
+Meta's Flow JSON changelog returned **HTTP 500** from every path tried (old and
+new), so the list of currently-supported versions was unreadable. Third-party
+sources still reported 7.3 as latest on that date, which is weak evidence.
+**Check the changelog yourself before pinning a version:**
+
+```
+https://developers.facebook.com/documentation/business-messaging/whatsapp/flows/changelogs
+```
+
+The version-state rules below *were* re-verified on 2026-09-03 — it's only the
+"which version is current" list that is stale.
 
 ### Gotchas
 
@@ -293,7 +338,7 @@ longer than about seven letters.
 
 ## 7. Pricing model
 
-**[verified, 2026-08]** Pricing is **per message**, since 2025-07-01. This
+**[verified, 2026-09]** Pricing is **per message**, since 2025-07-01. This
 replaced the older per-conversation model — if you find a guide describing
 24-hour "conversations" as the billing unit, it's out of date.
 
@@ -304,12 +349,43 @@ replaced the older per-conversation model — if you find a guide describing
 - A 72-hour **free entry point** window applies when the user initiates contact
   through ads or Page buttons.
 
-⚠️ **[unconfirmed]** Multiple third-party sources report that service messages
-and utility templates inside the 24-hour window become billable on
-**2026-10-01**. **Meta's own pricing page does not state this** as of
-2026-08-26 — it only lists rate-card updates for specific markets on that date.
-If your budget depends on the free window, verify directly with Meta rather
-than trusting secondary sources (this one included).
+### ⚠️ The 2026-10-01 question — still open
+
+**[unconfirmed, re-checked 2026-09-03]** Many third-party sources — including
+BSPs and resellers, who are usually well briefed — state that **service
+messages (free-form agent replies) and utility templates inside the 24-hour
+customer service window become billable on 2026-10-01**, ending a free period
+that ran from 2025-07-01.
+
+**Meta's own documentation still does not say this.** Re-checked on 2026-09-03
+against both the pricing page and the dedicated *Pricing Updates* page:
+
+- Both still state that non-template messages are free in an open customer
+  service window, and that *"utility templates delivered within an open
+  customer service window are free."*
+- **2026-10-01 appears only as a rate-card change** for nine specific markets
+  (Bangladesh, Iraq, Nepal, Sri Lanka, Kazakhstan, Kuwait, Morocco, Oman,
+  Ukraine) — not as a change to *which* messages are free.
+- The pricing object still returns `"billable": false` with
+  `"type": "free_customer_service"` for that case.
+
+**What changed since 2026-08-26:** third-party accounts got *more* specific
+(naming a 2026-09-01 deadline for Meta to publish final per-country service
+rates), and that deadline **passed without Meta publishing anything**. So as of
+2026-09-03, roughly four weeks out from the alleged date, the claim is
+**unconfirmed and slightly weaker than before**, not stronger.
+
+Two things follow, and they point in different directions — hold both:
+
+- **Don't restate it as fact.** It is not in Meta's docs, and the one checkable
+  prediction attached to it did not come true on time.
+- **Don't budget as if it can't happen.** Sources this consistent are rarely
+  inventing a date outright, and Meta has announced pricing changes on short
+  notice before. If your cost model depends on free in-window replies, price
+  the scenario where they aren't, and **re-check Meta's pricing page directly
+  in late September 2026** — not this file, and not a blog.
+
+If you have a Meta rep or BSP, that is the only source that settles it.
 
 **[verified]** The **On-Premises API was fully sunset on 2025-10-23.** Cloud
 API is the only supported official architecture.
@@ -325,29 +401,113 @@ replied from the app.
 **Decision rule:** *does any human send messages from THAT number?* → you need
 Coexistence. If the bot is the only thing living there, you don't.
 
-**[verified]** In Meta's docs this lives under **Embedded Signup → onboarding
-WhatsApp Business app users**, which is a **Tech Provider** flow. Becoming a
-Tech Provider requires **Advanced access to `whatsapp_business_management`** —
-without it, calls against WABAs your business doesn't own fail with error 200.
+**[verified, 2026-09]** In Meta's docs this lives under **Embedded Signup →
+onboard WhatsApp Business app users**, which is a **Tech Provider** flow.
+Becoming a Tech Provider requires **Advanced access to both
+`whatsapp_business_messaging` and `whatsapp_business_management`** — the first
+to send on behalf of clients, the second to reach their WABAs. Without it,
+calls against WABAs your business doesn't own fail with error 200.
 
 **[field]** In practice that made the path:
 
 ```
-Tech Provider  →  App Review  →  Advanced Access  →  Coexistence
+Tech Provider  →  App Review  →  Advanced Access  →  App published (Live)  →  Coexistence
 ```
 
 The Tech Provider prerequisite is the step people miss, because the panels let
 you connect the number, report success, and then deliver nothing.
 
-**[field]** Other things learned the hard way:
+### Advanced Access is inert while the app is in Development mode
 
-- **The 14-day rule:** if nobody opens the WhatsApp Business app for 14
-  consecutive days, Meta stops syncing.
-- Coexistence **cannot be tested with a test number**.
-- Review can take weeks. Don't build a plan that depends on the date.
-- **Meta's automated support gave wrong answers repeatedly** during one
-  diagnosis — claiming a missing payment method, claiming misconfiguration, and
-  denying features that exist. Verify against the API.
+This is the trap that costs the most time, because it makes an *approved*
+permission behave exactly like a missing one.
+
+**[verified, 2026-09]** *"Apps in Development mode can only request permissions
+from role users."* Development mode limits the app to people who hold a role on
+it (admins, developers, testers) **no matter what App Review approved**. Live
+mode is what makes Advanced Access mean anything for everyone else.
+
+**[field, 2026-08-31]** Concretely: with all three permissions already showing
+**Approved / Advanced Access**, the Embedded Signup dialog still failed with
+
+```
+missing required Graph API permissions for Cloud API companion pairing
+```
+
+The permissions were **not** missing. The app was still unpublished. Flipping
+it to Live — with no change to permissions — made the same flow succeed on the
+next attempt. **Read that error as "permissions not in effect", not
+"permissions not granted"**, and check app mode before re-submitting anything
+to review.
+
+### Embedded Signup creates its own WABA
+
+**[field, 2026-08-31]** The flow **created a brand-new WhatsApp Business
+Account** for the number rather than using the empty WABA that had been
+pre-created and passed to it for exactly this purpose. Meta's docs don't
+promise either behavior — they describe connecting "their existing WhatsApp
+Business app account", which reads as though an existing WABA would be reused.
+It wasn't.
+
+Consequences, all of which showed up in the same session:
+
+- **Two WABAs ended up with near-identical names** — the empty one created by
+  hand and the one Embedded Signup made. In the pickers they are
+  indistinguishable by name.
+- **One of them was invisible to the app.** Selecting the wrong one produced
+  only:
+  ```
+  no es un identificador de negocio válido
+  (not a valid business identifier)
+  ```
+  with nothing indicating *which* WABA was expected or why the other one didn't
+  qualify.
+- Every post-connection step — `subscribed_apps`, assigning the system user,
+  the `WABA_ID` in your config — has to point at the WABA the flow **actually
+  created**, not the one you planned to use.
+
+**So:** don't pre-create a WABA for a Coexistence number and assume it will be
+used. After the flow completes, **read the WABA ID back from the API** and
+treat that as the source of truth:
+
+```bash
+# WABAs owned by the business — find the one that actually holds the number
+curl -s -H "Authorization: Bearer $TOKEN" \
+  "https://graph.facebook.com/v26.0/{business-id}/owned_whatsapp_business_accounts"
+
+# Confirm the number landed, and on Cloud API
+curl -s -H "Authorization: Bearer $TOKEN" \
+  "https://graph.facebook.com/v26.0/{waba-id}/phone_numbers?fields=display_phone_number,platform_type,status,is_on_biz_app"
+```
+
+`platform_type` must read **`CLOUD_API`**. **[field]** `ON_PREMISE` here is the
+value that fools people: the panel says connected, the number is listed, and
+nothing works.
+
+### Other things learned the hard way
+
+- **The 14-day rule** — **[verified, 2026-09]** now documented, as an
+  offboarding reason: `PRIMARY_INACTIVITY (primary device inactive for
+  approximately 14 days)`. If nobody opens the WhatsApp Business app for ~14
+  consecutive days, Meta stops syncing and can offboard the number. Tell the
+  team that owns the phone; it reads as an outage later.
+- **[verified, 2026-09]** The phone must run **WhatsApp Business app 2.24.17 or
+  higher**.
+- Coexistence **cannot be tested with a test number**. There is no dry run —
+  the first real execution is on a number people depend on.
+- **[field]** The flow must be completed **in one sitting**, with the phone in
+  hand. Interrupting it leaves the number half-registered and you have to clean
+  up before retrying.
+- **[field]** App Review timing, one data point: submitted **2026-08-15**,
+  approved **2026-08-27** — 12 days, approved first try, against the **20 days**
+  Meta's own panel advertises. The *"~5 business days"* that circulates in
+  third-party guides is **wrong** for App Review; it belongs to a different
+  process. What made it go through in one pass was submitting complete:
+  per-permission justification, screencast, data-handling declaration,
+  published legal documents, and a scoped test account for the reviewer.
+- **[field]** **Meta's automated support gave wrong answers repeatedly** during
+  one diagnosis — claiming a missing payment method, claiming misconfiguration,
+  and denying features that exist. Verify against the API.
 
 **"Ready for testing"** in Permissions and features = **Standard Access**:
 enough for the test number and for admins/developers of the app. A real number
@@ -374,6 +534,11 @@ reviewer will ask what you need them for. A bot that replies to messages needs
 | Duplicate messages | Not deduplicating by `wa_message_id`, or responding 200 too slowly |
 | Flow opens, nothing happens | Flow is a draft, or `mode` doesn't match |
 | Flow suddenly stops opening | Its Flow JSON version expired |
+| `missing required Graph API permissions for Cloud API companion pairing` | Often **not** missing permissions — the app is still in Development mode, where Advanced Access is inert ([§8](#8-coexistence-and-app-review)) |
+| "not a valid business identifier" during Embedded Signup | Wrong WABA picked — Embedded Signup made its own, and it's the near-identical twin ([§8](#8-coexistence-and-app-review)) |
+| Coexistence number connected, `platform_type: ON_PREMISE` | The pairing didn't complete on Cloud API. It is not connected, whatever the panel says |
+| Coexistence number stopped syncing | Nobody opened WhatsApp Business for ~14 days (`PRIMARY_INACTIVITY`) |
+| A doc link 404s, or contradicts the panel | Docs moved to `/documentation/business-messaging/whatsapp/`; old paths 404 or serve a stale copy ([§1](#1-panel-navigation)) |
 
 ### Verify without trusting the panel
 
@@ -419,7 +584,13 @@ Order that avoids rework:
 6. Then the bot logic.
 7. **Permanent token** once the flow works — it needs another admin's approval,
    so request it early.
-8. **App Review / Coexistence** only when moving to a real number.
+8. **App Review / Coexistence** only when moving to a real number. Two things
+   in that order, both easy to forget: get Advanced Access approved, **then
+   publish the app to Live** — approval alone does nothing while the app sits
+   in Development mode ([§8](#8-coexistence-and-app-review)).
+9. **After a Coexistence connection, re-read your IDs from the API.** The WABA
+   the flow created may not be the one you intended to use, and every ID in
+   your config has to follow it.
 
 ---
 
