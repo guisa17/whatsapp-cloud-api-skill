@@ -273,9 +273,19 @@ recreation is cheap.
 2025-09-09.
 
 ⚠️ **This is the one claim here that could not be re-verified on 2026-09-03:**
-Meta's Flow JSON changelog returned **HTTP 500** from every path tried (old and
-new), so the list of currently-supported versions was unreadable. Third-party
-sources still reported 7.3 as latest on that date, which is weak evidence.
+Meta's Flow JSON changelog returned **HTTP 500** from every path tried — old
+and new prefixes, with and without the `#currently-supported-versions` anchor —
+so the supported-versions table was unreadable. Every other Flows page defers
+to it (`"For supported versions, see the list of versions"`) and their own
+examples run older (2.1 through 5.1), so none of them substitutes for it.
+
+What corroboration exists is **indirect**: a search-engine index of that same
+Meta changelog still describes **7.3** as the newest, adding that it brought
+improved routing-model and data-model validation. That is Meta's wording, but
+read through a cache of unknown age — enough to make 7.3 the reasonable
+default, not enough to call it verified. Wrapper libraries are no help here;
+they lag (pywa's docs still example 7.2).
+
 **Check the changelog yourself before pinning a version:**
 
 ```
