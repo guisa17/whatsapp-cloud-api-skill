@@ -2,10 +2,10 @@
 name: whatsapp-cloud-api
 description: Build, configure and debug bots on Meta's WhatsApp Cloud API. Use for any Cloud API task — access tokens, webhooks that verify but never deliver, WhatsApp Flows, message templates, rate limits, pricing, test numbers, Coexistence, App Review — and especially when the panel says "connected successfully" but no messages arrive, an approved permission behaves as if it were missing, or an API call fails with an opaque error code.
 license: MIT
-compatibility: Requires network access to graph.facebook.com. The bundled diagnostic script needs Python 3.9+ and httpx. Verified against Graph API v26.0 on 2026-09-03.
+compatibility: Requires network access to graph.facebook.com. The bundled diagnostic script needs Python 3.9+ and httpx. Verified against Graph API v26.0 on 2026-10-08.
 metadata:
-  version: "1.1.1"
-  last-verified: "2026-09-03"
+  version: "1.2.0"
+  last-verified: "2026-10-08"
   graph-api-version: "v26.0"
   source: "https://github.com/guisa17/whatsapp-cloud-api-skill"
 ---
@@ -28,19 +28,21 @@ Claims are tagged so you know what to trust:
 - **[field]** — observed in production. True at least once, for at least one setup.
 - **[unconfirmed]** — reported by third parties, *not* found in Meta's docs. Verify before acting.
 
-**Last verified: 2026-09-03 against Graph API v26.0.** Anything about *where a
+**Last verified: 2026-10-08 against Graph API v26.0.** Anything about *where a
 button lives in the panel* ages fastest — Meta redesigns often. Treat §1 as a
 hint, not a map.
 
-Everything below was re-verified on that date:
+Each row says when it was last re-checked:
 
 | Claim | Re-verified | Note |
 |---|---|---|
-| Graph API is on **v26.0** | 2026-09-03 | Unchanged; released 2026-07-29 |
-| Pricing is **per message** since 2025-07-01 | 2026-09-03 | Unchanged |
-| The 2026-10-01 free-window change | 2026-09-03 | **Confirmed in Meta's docs** — service messages and in-window utility templates become billable. See [§7](#7-pricing-model) |
+| Graph API is on **v26.0** | 2026-10-08 | Unchanged; released 2026-07-29. No v27.0 changelog yet |
+| Pricing is **per message** since 2025-07-01 | 2026-10-08 | Unchanged |
+| Service messages and in-window utility templates are **billable since 2026-10-01** | 2026-10-08 | In effect. See [§7](#7-pricing-model) |
+| **1,000 free service messages per number per month** | 2026-10-08 | `[unconfirmed]` — consistent across BSPs, not on Meta's non-template page. See [§7](#7-pricing-model) |
 | Flow JSON freeze/expiry + ~90-day notice | 2026-09-03 | Unchanged |
 | **Latest Flow JSON is 7.3** | 2026-09-03 | Confirmed *Recommended* in Meta's changelog. The page 500s to scripts but renders in a browser — see [§5](#5-flows) |
+| Uploading an asset to a published Flow sends it back to DRAFT | 2026-09-26 | Corrects the old "published = immutable" claim. See [§5](#5-flows) |
 
 ---
 
@@ -263,10 +265,10 @@ noting that "circumstances may require that a version be frozen or expired in
 less than 90 days." Third-party guides quoting a **12-month** support window
 are stating something Meta's versioning page does not.
 
-⚠️ **Combine that with the next bullet and you get a real lifecycle problem:**
-a published Flow is immutable, and its version will eventually expire. Plan to
-**recreate Flows periodically**, and keep the JSON in source control so that
-recreation is cheap.
+⚠️ **That is a real lifecycle problem:** a Flow's version will eventually
+expire, and updating a published Flow in place is risky (see the first gotcha
+below). Plan to **move Flows to a new version periodically**, and keep the JSON
+in source control so that re-uploading or recreating them is cheap.
 
 **[verified, 2026-09-03]** Latest Flow JSON: **7.3**, and it is the one Meta
 marks *Recommended*. The changelog's own "Updated" stamp reads **2025-11-07**,
@@ -315,8 +317,17 @@ user who received the Flow message. Opt in by setting `data_api_version` to
 
 ### Gotchas
 
-- **[verified]** A published Flow is **immutable**. Meta rejects new assets on
-  it. To change one, create another.
+- **[verified, 2026-09-26]** **Uploading an asset to a published Flow sends it
+  back to DRAFT.** Meta accepts the upload without error, and from then on the
+  Flow can no longer be opened with `mode: "published"` — a form that worked
+  breaks silently (the customer taps the button and nothing happens). Any
+  script that uploads assets must **publish immediately afterwards**. To
+  recover: re-upload the previous JSON and `POST /{flow-id}/publish`. *(Earlier
+  versions of this file said a published Flow was immutable. That is false,
+  checked against the live API.)*
+- **[verified]** **Every screen in a Flow must be reachable.** Two forms opened
+  from different buttons are **two Flows**, not two screens of one: Meta
+  rejects the JSON with `INVALID_ROUTING_MODEL`.
 - **[field]** **Sending an empty `data: {}` breaks the send.** The error talks
   about the *type* when the real problem is that the field **shouldn't be
   there**:
@@ -350,7 +361,7 @@ user who received the Flow message. Opt in by setting `data_api_version` to
 | **24 characters** per row title | |
 | **1024 characters** of body | |
 | **`media_id` expires after 30 days** | The file stops sending. Re-upload |
-| **24-hour window** | Outside it you can only send **approved templates**. Inside it, replies are free **only until 2026-10-01** — see [§7](#7-pricing-model) |
+| **24-hour window** | Outside it you can only send **approved templates**. Inside it, replies are **no longer unconditionally free** since 2026-10-01 — see [§7](#7-pricing-model) |
 
 **Validate limits before calling the API.** An over-limit payload returns a
 generic 400 that doesn't say which field was wrong; an explicit error in your
@@ -370,51 +381,64 @@ longer than about seven letters.
 replaced the older per-conversation model — if you find a guide describing
 24-hour "conversations" as the billing unit, it's out of date.
 
-- You're charged when a **template message is delivered**.
-- Categories: **Marketing** (always charged), **Utility** and **Authentication**
-  (charged outside customer service windows).
-- **Non-template messages inside an open customer service window are free** — **until 2026-10-01**, see below.
+- You're charged when a message is **delivered**. Incoming user messages are
+  never charged.
+- Categories: **Marketing**, **Utility**, **Authentication** (templates), and
+  **Service** (any non-template reply).
 - A 72-hour **free entry point** window applies when the user initiates contact
-  through ads or Page buttons.
+  through Click-to-WhatsApp ads or Page buttons.
 
-### The free window is ending — 2026-10-01
+### The free 24-hour window ended on 2026-10-01
 
-**[verified, 2026-09-03]** This is documented, but **not on the pricing page**.
-It lives on a separate page that the main pricing page does not surface:
-`…/whatsapp/pricing/non-template-messages`. Two dates:
+**[verified, 2026-09-03]** Documented on a separate page that the main pricing
+page does not surface: `…/whatsapp/pricing/non-template-messages`.
 
-| Date | What changes |
+| Date | What changed |
 |---|---|
 | **2026-08-01** | Meta charges for **Meta Business Agent** messages, **per token**, invoiced monthly. |
 | **2026-10-01** | Meta charges for **service messages** — *"which have not been charged since November 2024"*. |
 | **2026-10-01** | Meta charges for **utility templates sent in response to users inside an open 24-hour customer service window** — *"these messages have not been charged since July 1, 2025"*. |
 
-Definitions and rates:
-
 - *"Any non-template message that is not powered by Meta Business Agent is a
-  service message."* So a free-form reply — from a human agent or your own
-  third-party bot — is a service message, and becomes billable.
+  service message."* A free-form reply — from a human agent or your own bot,
+  buttons, documents and Flows included — is a service message.
 - **Service messages are priced like utility and authentication messages** for
   the same country.
-- Meta said it would publish the 2026-10-01 rates **by 2026-09-01**.
-- The **72-hour free entry point** window is unchanged for template delivery.
+- The **72-hour free entry point** window still applies.
 
-⚠️ **Read §7 above with this in mind.** Everything in it describes the model
-*until 2026-10-01*. After that date, "non-template messages inside an open
-window are free" and "utility templates in-window are free" both stop being
-true, and the practical consequence is large: **a bot that only ever replies
-inside the 24-hour window goes from free to paid per message.**
+**[unconfirmed, 2026-10-08]** **The first 1,000 service messages per business
+phone number per month are free**, then each delivered one is charged. The
+allowance is per number (not per WABA), resets monthly and doesn't roll over.
+Reported consistently by BSPs (360dialog, Gupshup, respond.io, YCloud), who say
+Meta added it to its pricing page on 2026-09-01 — but Meta's
+non-template-messages page doesn't mention it. Per the same sources:
+
+- **In-window utility templates don't count against the allowance** — they are
+  charged from the first one.
+- **Several markets had utility/authentication rates raised on 2026-10-01**
+  (and service follows utility). Look up your recipient country's current rate
+  card instead of reusing an older figure.
+- **Coexistence: messages a human sends from the WhatsApp Business app are not
+  charged.** Only what goes out through the API counts.
+
+**What this means in practice.** A bot that only replies inside the window used
+to cost nothing. Now its cost is roughly *(bot messages per conversation ×
+conversations per month − 1,000) × the utility rate*. The lever you control is
+**messages per conversation**: a greeting sent as text followed by a separate
+button menu is two billable messages, and folding the greeting into the menu's
+body is one. Count your bot's sends per typical conversation before estimating
+anything.
 
 > **Why this was easy to get wrong.** Meta splits *current* pricing and
-> *upcoming* pricing across different pages. As of 2026-09-03 the main pricing
-> page still states — correctly, for today — that non-template messages and
-> in-window utility templates are free, with `"billable": false` and
-> `"type": "free_customer_service"` in the pricing object. Nothing on it says
-> that changes in four weeks. **Read the "upcoming pricing updates" page before
-> concluding anything about future cost**, and don't treat the absence of a
-> change on the main page as evidence there isn't one. An earlier version of
-> this file drew exactly that wrong conclusion and labelled the change
-> `[unconfirmed]`.
+> *upcoming* pricing across different pages. On 2026-09-03 the main pricing
+> page correctly described the model then in force — non-template messages and
+> in-window utility templates free, with `"billable": false` and
+> `"type": "free_customer_service"` — with nothing saying it would change in
+> four weeks. **On 2026-10-08, a week after the change, scripted fetches of
+> that page (old and new paths) still returned "service conversations are
+> free".** Never conclude anything about cost from that page alone: read the
+> non-template-messages page, and confirm in **WhatsApp Manager → Billing**
+> what you are actually being charged.
 
 **[verified]** The **On-Premises API was fully sunset on 2025-10-23.** Cloud
 API is the only supported official architecture.
@@ -445,6 +469,88 @@ Tech Provider  →  App Review  →  Advanced Access  →  App published (Live) 
 
 The Tech Provider prerequisite is the step people miss, because the panels let
 you connect the number, report success, and then deliver nothing.
+
+### The App Review procedure, in order
+
+**[field, 2026-08 and 2026-09]** Done twice, for two apps in the same business
+portfolio. The first was approved on the first submission in 12 days.
+
+The app **Dashboard** shows the path as a checklist. Labels below are
+translated from a Spanish-language panel, so match them by meaning:
+
+| Dashboard item | What it takes |
+|---|---|
+| Customize the WhatsApp use case | Test number working (§1, §3) |
+| **Facebook Login for Business** | The Embedded Signup configuration (step 2 below) |
+| Testing requirements | Successful API calls with the permissions you will request. Your bot running on the test number covers it |
+| **Business and access verification** | Business verification is **inherited** by every app in the portfolio. **Tech Provider is not** (step 1) |
+| **App Review** | The submission (steps 3–4) |
+| **Publish app** | After approval (step 5). The one people skip |
+
+**1. Tech Provider is per app.** Business verification carries over between
+apps of the same portfolio; the Tech Provider designation does **not** — each
+new app asks for it again, even when another app of the same business already
+has it. That's expected, not a misconfiguration.
+
+**2. The Embedded Signup configuration** (Facebook Login for Business →
+Configurations → create). A six-step wizard that **warns some steps can't be
+changed later** — if you get one wrong, create another configuration.
+
+| Step | Choose |
+|---|---|
+| Name | One that names the app and the use (`Coexistence Sales`): there will be several |
+| Login variation | WhatsApp Embedded Signup |
+| Products | **Only** WhatsApp Cloud API |
+| Access token | Expiration **Never** |
+| Assets | Select nothing: the business grants them while going through the flow |
+| Permissions | Only `whatsapp_business_management` and `whatsapp_business_messaging` |
+
+The confusing part of the last step: the wizard mixes **app permissions** (the
+ones above) with **task permissions on assets** (manage, view). Different
+things; only the former matter.
+
+It returns a `config_id`, which your onboarding page passes together with
+`featureType: 'whatsapp_business_app_onboarding'` (Coexistence). In the
+Facebook Login settings, also enable **Login with the JavaScript SDK**, add
+your page's domain to the allowed domains, and add an OAuth redirect URI even
+though the flow uses a popup — the app that worked had one. In **App settings →
+Basic**, the privacy policy, terms of service and data deletion URLs, the app
+icon (1024×1024) and the app domains must be filled in: the reviewer opens
+them.
+
+⚠️ **Don't confuse `config_id` with `app_id`.** Same length, and they have
+been swapped before. The onboarding page needs both, and the `app_id` must
+match the one your token belongs to (`debug_token` returns it).
+
+**3. Advanced Access.** **Permissions and features** → *Request advanced
+access*, on the two permissions only. It becomes part of the review request.
+
+**4. The submission.** What got it through on the first pass:
+
+- For each permission, three things: **how it's used**, **what value it gives
+  the user**, and **why it's necessary**.
+- A screencast **without narration**, with title cards between shots explaining
+  each one (reviewers watch without sound). It must show the Embedded Signup
+  dialog up to the permissions screen — where `whatsapp_business_management`
+  is visible — and real use of messaging. **Close the dialog without
+  completing it**: connecting the real number comes after approval.
+- Reviewer instructions **in English**, and a test account with narrowly scoped
+  access, with the full login shown in the video.
+- Data handling answers consistent with your privacy policy: who processes the
+  data, which third parties (an LLM provider counts), how deletion works.
+- **Published privacy policy, terms and data deletion pages. What they say is
+  a commitment**: the reviewer checks it against the video and against what the
+  app does.
+- **Don't reuse another app's instructions.** An app that only reads and one
+  that replies to customers aren't described the same way; copying asks Meta to
+  approve something other than what the app does.
+- Once submitted it **can't be edited or cancelled**. Check everything before
+  sending.
+
+**5. Approved: publish the app** (next section).
+
+**6. Connect the number** — and then redo the setup against what the flow
+created (the two sections after that).
 
 ### Advanced Access is inert while the app is in Development mode
 
@@ -587,6 +693,8 @@ reviewer will ask what you need them for. A bot that replies to messages needs
 | Duplicate messages | Not deduplicating by `wa_message_id`, or responding 200 too slowly |
 | Flow opens, nothing happens | Flow is a draft, or `mode` doesn't match |
 | Flow suddenly stops opening | Its Flow JSON version expired |
+| Flow stops opening right after a script uploaded its JSON | The upload sent the published Flow back to DRAFT — publish it again ([§5](#5-flows)) |
+| Charges appear for a bot that only replies in-window | Expected since 2026-10-01: service messages beyond the monthly allowance are billable ([§7](#7-pricing-model)) |
 | `missing required Graph API permissions for Cloud API companion pairing` | Often **not** missing permissions — the app is still in Development mode, where Advanced Access is inert ([§8](#8-coexistence-and-app-review)) |
 | "not a valid business identifier" during Embedded Signup | Wrong WABA picked — Embedded Signup made its own, and it's the near-identical twin ([§8](#8-coexistence-and-app-review)) |
 | Coexistence number connected, `platform_type: ON_PREMISE` | The pairing didn't complete on Cloud API. It is not connected, whatever the panel says |

@@ -9,6 +9,53 @@ the verification date is treated as content, not metadata.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.0] — 2026-10-08
+
+The 2026-10-01 pricing change is now in effect, a wrong Flows claim is
+corrected, and the App Review procedure is written out step by step.
+
+### Changed
+
+- **§7 Pricing describes the model in force**, not an upcoming one: service
+  messages and in-window utility templates have been billable since
+  2026-10-01.
+- The limits table no longer says in-window replies are free "until
+  2026-10-01".
+
+### Added
+
+- **1,000 free service messages per business phone number per month**, tagged
+  `[unconfirmed]`: BSPs (360dialog, Gupshup, respond.io, YCloud) agree on it
+  and say Meta added it to its pricing page on 2026-09-01, but Meta's
+  non-template-messages page doesn't mention it. Also `[unconfirmed]`:
+  in-window utility templates don't count against it, rates were raised in
+  several markets, and messages sent from the WhatsApp Business app under
+  Coexistence aren't charged.
+- A cost rule of thumb, and the one lever a bot controls: messages per
+  conversation.
+- **§8: the App Review procedure, in order** — the Dashboard checklist, Tech
+  Provider being per app, the six-step Embedded Signup configuration wizard,
+  and what made a submission pass on the first try.
+- Two symptom→cause rows: a Flow that stops opening after an upload, and
+  charges on an in-window-only bot.
+- "Every screen in a Flow must be reachable" (`INVALID_ROUTING_MODEL`).
+
+### Corrected
+
+- **A published Flow is not immutable.** Uploading an asset to it is accepted
+  and sends it back to DRAFT, which silently breaks `mode: "published"` sends.
+  Verified against the live API on 2026-09-26. The lifecycle note in §5 was
+  rewritten to match.
+
+### Verified against Meta's documentation (2026-10-08)
+
+- Graph API is still on **v26.0**; no v27.0 changelog yet.
+- **The main pricing page still says service conversations are free** a week
+  after the change, on both the old and new documentation paths. §7 now says
+  to confirm costs in WhatsApp Manager → Billing.
+
+[1.2.0]: https://github.com/guisa17/whatsapp-cloud-api-skill/releases/tag/v1.2.0
+
 ## [1.1.1] — 2026-09-03
 
 Closes the one item 1.1.0 shipped unverified.

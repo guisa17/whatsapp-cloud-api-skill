@@ -57,8 +57,8 @@ from:
 - **[unconfirmed]** — reported by third parties and *not* found in Meta's docs.
   Verify before acting on it.
 
-**Last verified: 2026-09-03, against Graph API v26.0.** Every dated claim in
-`SKILL.md` was checked on that date; the table at the top of the file lists them.
+**Last verified: 2026-10-08, against Graph API v26.0.** The table at the top of
+`SKILL.md` lists every dated claim and when it was last re-checked.
 
 ## The freshness problem
 
