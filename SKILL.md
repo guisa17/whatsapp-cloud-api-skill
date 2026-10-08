@@ -695,6 +695,7 @@ reviewer will ask what you need them for. A bot that replies to messages needs
 | Flow suddenly stops opening | Its Flow JSON version expired |
 | Flow stops opening right after a script uploaded its JSON | The upload sent the published Flow back to DRAFT — publish it again ([§5](#5-flows)) |
 | Charges appear for a bot that only replies in-window | Expected since 2026-10-01: service messages beyond the monthly allowance are billable ([§7](#7-pricing-model)) |
+| `(#131042) Business eligibility payment issue` | No valid payment method on the WABA. A WABA created by Embedded Signup doesn't inherit one — add it before the free allowance runs out |
 | `missing required Graph API permissions for Cloud API companion pairing` | Often **not** missing permissions — the app is still in Development mode, where Advanced Access is inert ([§8](#8-coexistence-and-app-review)) |
 | "not a valid business identifier" during Embedded Signup | Wrong WABA picked — Embedded Signup made its own, and it's the near-identical twin ([§8](#8-coexistence-and-app-review)) |
 | Coexistence number connected, `platform_type: ON_PREMISE` | The pairing didn't complete on Cloud API. It is not connected, whatever the panel says |

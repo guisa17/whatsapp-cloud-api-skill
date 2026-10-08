@@ -36,8 +36,9 @@ corrected, and the App Review procedure is written out step by step.
 - **§8: the App Review procedure, in order** — the Dashboard checklist, Tech
   Provider being per app, the six-step Embedded Signup configuration wizard,
   and what made a submission pass on the first try.
-- Two symptom→cause rows: a Flow that stops opening after an upload, and
-  charges on an in-window-only bot.
+- Three symptom→cause rows: a Flow that stops opening after an upload,
+  charges on an in-window-only bot, and `#131042` (no payment method on a WABA
+  that Embedded Signup just created).
 - "Every screen in a Flow must be reachable" (`INVALID_ROUTING_MODEL`).
 
 ### Corrected
