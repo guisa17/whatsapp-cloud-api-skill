@@ -584,9 +584,18 @@ translated from a Spanish-language panel):
    (legality review, challenging unlawful ones, data minimisation,
    documentation, none, prohibited by law). Tick only what the business
    actually does — it's a commitment.
-5. **Reviewer instructions** — ⚠️ tagged **"Needs review"**; it may carry
-   over another app's instructions. Replace them entirely, with
-   the test account's URL, user and password.
+5. **Reviewer instructions** — ⚠️ **a prerequisite nothing warns about
+   earlier:** with no **platform** on the app, this step only says you must
+   specify platforms first. Fix: **App settings → Basic → "+ Add platform" →
+   Website → Site URL** (the system the reviewer will use) → **Save**. Best
+   done together with the legal URLs, before starting the request. Then the
+   step asks for: the **website login URL** ("Edit website login URL");
+   `instructions-web-2` (full instructions, in English); `fblogin-web-1`
+   "Is Facebook Login integrated on this platform?" (**Yes** if you use
+   Embedded Signup — it's Facebook Login for Business); `accesscode-web-1`
+   (optional — put the test account's user and password here too);
+   `accesscode-web-2` (app-store gift codes) and `geo-web-5` (geo
+   restrictions), both empty when they don't apply.
 6. All five green: **Submit for review**. It can't be edited or cancelled
    afterwards.
 
