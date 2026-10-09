@@ -572,13 +572,20 @@ translated from a Spanish-language panel):
      video**, which can take a while; Meta notifies you when it's done.
    - **`public_profile`**: *Get started* opens a confirmation with **only the
      checkbox** — no description, no video.
-4. **Data handling** — ⚠️ **pre-filled** with another app of the same
-   business's answers: processors/service providers with access to platform
-   data, the responsible entity and its country, public-authority requests in
-   the last 12 months, and policies for them. Remove any processor this app
-   doesn't use.
-5. **Reviewer instructions** — ⚠️ tagged **"Needs review"** because it
-   **carries over another app's instructions**. Replace them entirely, with
+4. **Data handling** — arrives **empty**, with an **"Autofill from another
+   app"** button: ⚠️ don't use it if the other app declares something this one
+   doesn't do (an LLM provider, say). Five questions:
+   `processor-0` — processors or service providers, *including your own
+   companies*, with access to Platform Data (yes/no; must match your privacy
+   policy); `responsible-1` / `responsible-2` — the responsible legal entity
+   and its country; `requests-3` — personal data given to public authorities
+   for **national security** requests in the last 12 months (no / yes by user
+   ranges / prohibited by law); `requests-4` — policies for such requests
+   (legality review, challenging unlawful ones, data minimisation,
+   documentation, none, prohibited by law). Tick only what the business
+   actually does — it's a commitment.
+5. **Reviewer instructions** — ⚠️ tagged **"Needs review"**; it may carry
+   over another app's instructions. Replace them entirely, with
    the test account's URL, user and password.
 6. All five green: **Submit for review**. It can't be edited or cancelled
    afterwards.
