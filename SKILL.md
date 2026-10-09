@@ -28,7 +28,7 @@ Claims are tagged so you know what to trust:
 - **[field]** — observed in production. True at least once, for at least one setup.
 - **[unconfirmed]** — reported by third parties, *not* found in Meta's docs. Verify before acting.
 
-**Last verified: 2026-10-08 against Graph API v26.0.** Anything about *where a
+**Last verified: 2026-10-09 against Graph API v26.0.** Anything about *where a
 button lives in the panel* ages fastest — Meta redesigns often. Treat §1 as a
 hint, not a map.
 
