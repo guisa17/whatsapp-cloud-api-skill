@@ -543,7 +543,26 @@ more.** **[field, 2026-10]** Labels translated from a Spanish-language panel:
 - **Publish** sits in the same left menu, labelled "Unpublished". It comes
   **after** approval (step 5).
 
-**4. The submission.** What got it through on the first pass:
+**4. The submission.** **[field, 2026-10]** The screens, in order (labels
+translated from a Spanish-language panel):
+
+1. **Review → App Review → "App Review requests"**, status *Not submitted*.
+   Under *New requests*: `whatsapp_business_messaging`, `public_profile` and
+   `whatsapp_business_management`, each with *Usage rules*, *In 1 use case*
+   and a bin icon. **Don't remove `public_profile`** — every app has it, and a
+   three-permission request was approved first try. **Next**.
+2. **"Submit for App Review"**, five collapsible sections:
+   - **Verification** and **App settings** — already green, inherited from the
+     business and from *App settings → Basic*.
+   - **Allowed usage** — one description per permission, plus the screencast
+     and an acknowledgement checkbox.
+   - **Data handling** — ⚠️ **pre-filled** with another app of the same
+     business's answers. Review every question.
+   - **Reviewer instructions** — ⚠️ tagged **"Needs review"** because it
+     **carries over another app's instructions**. Replace them entirely (see
+     the last bullet below).
+
+What got it through on the first pass:
 
 - For each permission, three things: **how it's used**, **what value it gives
   the user**, and **why it's necessary**.
