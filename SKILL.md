@@ -2,10 +2,10 @@
 name: whatsapp-cloud-api
 description: Build, configure and debug bots on Meta's WhatsApp Cloud API. Use for any Cloud API task — access tokens, webhooks that verify but never deliver, WhatsApp Flows, message templates, rate limits, pricing, test numbers, Coexistence, App Review — and especially when the panel says "connected successfully" but no messages arrive, an approved permission behaves as if it were missing, or an API call fails with an opaque error code.
 license: MIT
-compatibility: Requires network access to graph.facebook.com. The bundled diagnostic script needs Python 3.9+ and httpx. Verified against Graph API v26.0 on 2026-10-08.
+compatibility: Requires network access to graph.facebook.com. The bundled diagnostic script needs Python 3.9+ and httpx. Verified against Graph API v26.0 on 2026-10-09.
 metadata:
   version: "1.2.0"
-  last-verified: "2026-10-08"
+  last-verified: "2026-10-09"
   graph-api-version: "v26.0"
   source: "https://github.com/guisa17/whatsapp-cloud-api-skill"
 ---
@@ -608,8 +608,13 @@ translated from a Spanish-language panel):
    in the video.
    **Rule: before drafting any field, read what an already-approved
    submission from the same business said, and start from that.**
-6. All five green: **Submit for review**. It can't be edited or cancelled
+6. All five green: **Submit for review** (bottom right) opens a confirmation
+   modal with a terms checkbox → **Submit**. It can't be edited or cancelled
    afterwards.
+7. Back on **"App Review requests"**, the status reads **"Review in
+   progress"** ("most requests are reviewed within 20 days"), with *View
+   request details*. Meta emails the contact address from *App settings →
+   Basic*.
 
 What got it through on the first pass:
 

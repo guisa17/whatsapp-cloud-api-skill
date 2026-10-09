@@ -9,7 +9,7 @@ the verification date is treated as content, not metadata.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [1.2.0] — 2026-10-08
+## [1.2.0] — 2026-10-09
 
 The 2026-10-01 pricing change is now in effect, a wrong Flows claim is
 corrected, and the App Review procedure is written out step by step.
@@ -36,6 +36,20 @@ corrected, and the App Review procedure is written out step by step.
 - **§8: the App Review procedure, in order** — the Dashboard checklist, Tech
   Provider being per app, the six-step Embedded Signup configuration wizard,
   and what made a submission pass on the first try.
+- **§8: the October 2026 App Review wizard, screen by screen**, recorded while
+  submitting a real request on 2026-10-09: the request list, the five
+  sections, the per-permission modal, the data-handling questions by id, the
+  reviewer-instruction fields, and the submit confirmation. Field notes that
+  cost a round trip each:
+  - the **AI Content Suggestion** invents features — don't use it;
+  - **Data handling arrives empty**, with an autofill-from-another-app button
+    that copies answers this app may not share;
+  - the reviewer-instructions step **needs a platform** (App settings → Basic
+    → Add platform → Website) and says so only when you get there;
+  - answering **Yes to Facebook Login** requires explaining it isn't used to
+    sign users in;
+  - optional fields answered with one sentence rather than left blank, and
+    test credentials kept active for a year.
 - Three symptom→cause rows: a Flow that stops opening after an upload,
   charges on an in-window-only bot, and `#131042` (no payment method on a WABA
   that Embedded Signup just created).
