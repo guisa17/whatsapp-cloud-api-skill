@@ -522,8 +522,26 @@ them.
 been swapped before. The onboarding page needs both, and the `app_id` must
 match the one your token belongs to (`debug_token` returns it).
 
-**3. Advanced Access.** **Permissions and features** → *Request advanced
-access*, on the two permissions only. It becomes part of the review request.
+**3. Advanced Access — there is no "Request advanced access" button any
+more.** **[field, 2026-10]** Labels translated from a Spanish-language panel:
+
+- **Use cases → Customize → Other tools → Permissions and features.** The two
+  WhatsApp permissions come pre-added, with status **"Ready for testing"**
+  (Standard Access) and an **Actions ▾** menu offering only *Go to App Review*
+  and a greyed-out *Required for use case* (they can't be removed). Other
+  permissions (`business_management`, `email`, `manage_app_solution`,
+  `whatsapp_business_manage_events`) show *+ Add to App Review*: **leave them
+  alone**. `public_profile` is granted automatically.
+- **Left menu → Review**, with three sub-pages:
+  - **Testing**: both permissions must read **Completed**. `public_profile`
+    may stay at "N test API calls" without blocking anything. Tests are valid
+    for **30 days** and take up to **24 h** to show — a bot that is actually
+    running on the test number satisfies them on its own.
+  - **Verification**: business verification and Tech Provider access.
+  - **App Review**: where the submission is built and sent (step 4).
+    *Actions → Go to App Review* lands in the same place.
+- **Publish** sits in the same left menu, labelled "Unpublished". It comes
+  **after** approval (step 5).
 
 **4. The submission.** What got it through on the first pass:
 

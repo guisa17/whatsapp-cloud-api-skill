@@ -40,6 +40,9 @@ corrected, and the App Review procedure is written out step by step.
   charges on an in-window-only bot, and `#131042` (no payment method on a WABA
   that Embedded Signup just created).
 - "Every screen in a Flow must be reachable" (`INVALID_ROUTING_MODEL`).
+- **The October 2026 App Review UI**: no "Request advanced access" button; the
+  WhatsApp permissions come pre-added, and the submission lives under
+  **Review → Testing / Verification / App Review**.
 
 ### Corrected
 
