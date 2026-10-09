@@ -551,16 +551,37 @@ translated from a Spanish-language panel):
    `whatsapp_business_management`, each with *Usage rules*, *In 1 use case*
    and a bin icon. **Don't remove `public_profile`** — every app has it, and a
    three-permission request was approved first try. **Next**.
-2. **"Submit for App Review"**, five collapsible sections:
-   - **Verification** and **App settings** — already green, inherited from the
-     business and from *App settings → Basic*.
-   - **Allowed usage** — one description per permission, plus the screencast
-     and an acknowledgement checkbox.
-   - **Data handling** — ⚠️ **pre-filled** with another app of the same
-     business's answers. Review every question.
-   - **Reviewer instructions** — ⚠️ tagged **"Needs review"** because it
-     **carries over another app's instructions**. Replace them entirely (see
-     the last bullet below).
+2. **"Submit for App Review"**: five sections, each with a **"Go to …"**
+   button. **Verification** and **App settings** are already green (inherited
+   from the business and from *App settings → Basic*). Any of them opens the
+   **"App Review request"** wizard: a 5-step bar, "Saved automatically", and
+   *Back to request · Previous · Next* at the bottom.
+3. **Allowed usage** — one card per permission, "How will the app use …?".
+   - **The two WhatsApp permissions**: first a one-line **Business
+     description** (*Get started* stays grey until it's filled). *Get started*
+     then opens a modal with:
+     - ⚠️ an **"AI Content Suggestion"** with *Use This*. **Don't use it**: it
+       invents generic features ("placing orders and tracking shipments",
+       "access the business assets of our customers") and signs off with
+       "[Your Name]". The reviewer compares it with the video.
+     - the description box (how it's used / value / why it's needed),
+     - **Upload file** for the screencast — **one video can serve both
+       permissions**,
+     - the test-call status, the acknowledgement checkbox, and **Save**.
+     After saving, the video check stays grey while **Meta processes the
+     video**, which can take a while; Meta notifies you when it's done.
+   - **`public_profile`**: *Get started* opens a confirmation with **only the
+     checkbox** — no description, no video.
+4. **Data handling** — ⚠️ **pre-filled** with another app of the same
+   business's answers: processors/service providers with access to platform
+   data, the responsible entity and its country, public-authority requests in
+   the last 12 months, and policies for them. Remove any processor this app
+   doesn't use.
+5. **Reviewer instructions** — ⚠️ tagged **"Needs review"** because it
+   **carries over another app's instructions**. Replace them entirely, with
+   the test account's URL, user and password.
+6. All five green: **Submit for review**. It can't be edited or cancelled
+   afterwards.
 
 What got it through on the first pass:
 
