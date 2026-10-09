@@ -595,7 +595,19 @@ translated from a Spanish-language panel):
    Embedded Signup — it's Facebook Login for Business); `accesscode-web-1`
    (optional — put the test account's user and password here too);
    `accesscode-web-2` (app-store gift codes) and `geo-web-5` (geo
-   restrictions), both empty when they don't apply.
+   restrictions). **Don't leave the optional ones blank** — answer each with
+   one sentence ("Not applicable. This is an internal web application…",
+   "None. Reachable from any location, no geo-blocking…"); that's how a
+   first-try approval was filled in. Credentials must stay active **for a
+   year** (Meta re-reviews periodically): don't deactivate the test account
+   after approval.
+   ⚠️ If you answer **Yes** to Facebook Login, the instructions **must** say
+   what it's for — e.g. used once, by your own admin, for Embedded Signup,
+   and **not** to sign users in (they use their own credentials). Otherwise
+   the reviewer expects a "Continue with Facebook" button in the login shown
+   in the video.
+   **Rule: before drafting any field, read what an already-approved
+   submission from the same business said, and start from that.**
 6. All five green: **Submit for review**. It can't be edited or cancelled
    afterwards.
 
