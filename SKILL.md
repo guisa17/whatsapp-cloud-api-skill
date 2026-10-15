@@ -2,10 +2,10 @@
 name: whatsapp-cloud-api
 description: Build, configure and debug bots on Meta's WhatsApp Cloud API. Use for any Cloud API task — access tokens, webhooks that verify but never deliver, WhatsApp Flows, message templates, rate limits, pricing, test numbers, Coexistence, App Review — and especially when the panel says "connected successfully" but no messages arrive, an approved permission behaves as if it were missing, or an API call fails with an opaque error code.
 license: MIT
-compatibility: Requires network access to graph.facebook.com. The bundled diagnostic script needs Python 3.9+ and httpx. Verified against Graph API v26.0 on 2026-10-09.
+compatibility: Requires network access to graph.facebook.com. The bundled diagnostic script needs Python 3.9+ and httpx. Verified against Graph API v26.0 on 2026-10-14.
 metadata:
-  version: "1.2.0"
-  last-verified: "2026-10-09"
+  version: "1.2.1"
+  last-verified: "2026-10-14"
   graph-api-version: "v26.0"
   source: "https://github.com/guisa17/whatsapp-cloud-api-skill"
 ---
@@ -736,6 +736,15 @@ doesn't expire. It just needs the assets from step 1.
 
 ### Other things learned the hard way
 
+- **Linked devices** — **[verified, 2026-10]** onboarding **unlinks every
+  companion device**; they can be re-linked afterwards, up to **four**.
+  **WhatsApp for Windows and WhatsApp for WearOS are not supported**: they
+  can't be re-linked, show placeholder text, and messages sent from them don't
+  fire webhooks. Use WhatsApp Web in a browser (or the Mac app).
+  **[field]** One team asked for its number to be disconnected two weeks
+  after onboarding because "nobody could log back in to WhatsApp Web" — most
+  likely they were on the Windows app. **Before connecting a number, ask which
+  devices the team uses, and re-link one with them present right after.**
 - **The 14-day rule** — **[verified, 2026-09]** now documented, as an
   offboarding reason: `PRIMARY_INACTIVITY (primary device inactive for
   approximately 14 days)`. If nobody opens the WhatsApp Business app for ~14

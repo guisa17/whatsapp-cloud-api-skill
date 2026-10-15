@@ -9,6 +9,19 @@ the verification date is treated as content, not metadata.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.1] — 2026-10-14
+
+### Added
+
+- **Coexistence: linked devices.** Onboarding unlinks every companion device;
+  up to four can be re-linked, but **WhatsApp for Windows and WearOS are not
+  supported** (verified in Meta's onboarding docs). Field note: a team asked
+  for disconnection because nobody could log back in, most likely because
+  they were on the Windows app. Ask which devices are in use before
+  connecting.
+
+[1.2.1]: https://github.com/guisa17/whatsapp-cloud-api-skill/releases/tag/v1.2.1
+
 ## [1.2.0] — 2026-10-09
 
 The 2026-10-01 pricing change is now in effect, a wrong Flows claim is
